@@ -19,7 +19,6 @@ class PositionalEmbedding(tf.keras.Model):
 
         dict_emb = self.embedding(positions)
         dict_emb *= tf.math.sqrt(tf.cast(self.embedding_size, tf.float32))
-        pos_emb = tf.gather(self.embedding_positional, positions)
 
         return dict_emb + inputs
 

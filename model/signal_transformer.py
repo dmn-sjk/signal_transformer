@@ -23,12 +23,11 @@ class SignalTransformer(tf.keras.Model):
 
         self.call = self.call.get_concrete_function(
             inputs=tf.TensorSpec([None, input_signal_length, num_signals], tf.float32),
-            lengths=tf.TensorSpec([None], tf.int32),
             training=tf.TensorSpec([], tf.bool)
         )
 
     @tf.function
-    def call(self, inputs, lengths, training):
+    def call(self, inputs, training):
         projection_output = self.projection(inputs)
         enc_output = self.encoder(projection_output, training, mask=None)  # (batch_size, inp_seq_len, d_model)
         pooling_out = self.pooling(enc_output)
@@ -38,7 +37,8 @@ class SignalTransformer(tf.keras.Model):
         return embeddings
 
     def warmup(self):
-        self(tf.zeros([1, 160, 6], tf.float32), tf.constant([100], tf.int32), tf.constant(False))
+        self(tf.zeros([1, 160, 6], tf.float32), tf.constant(False))
+
 
 if __name__=="__main__":
     model = SignalTransformer(num_signals=6,
